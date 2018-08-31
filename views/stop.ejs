@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <% include ../partials/head %>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+</head>
+
+<body class="container">
+<header>
+    <% include ../partials/header %>
+</header>
+
+<div>
+    <div class="container">
+        <h1>Departures: </h1>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="list-group">
+                    <% stops.forEach((stop) => { %>
+                    <a href="/routes/<%= stop.id %>" class="list-group-item">
+                        <h4 class="list-group-item-heading"><%= stop.name %></h4>
+                        <p class="list-group-item-text"><%= stop.distance %></p>
+                    </a>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>
