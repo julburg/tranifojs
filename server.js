@@ -27,7 +27,6 @@ app.get('/', function (req, res) {
 
 
 app.get('/routes/:stopid', function (req, res) {
-    console.log(req.params.stopid);
 
     res.render('route', {
         data: {},
@@ -39,9 +38,6 @@ app.get('/routes/:stopid', function (req, res) {
 })
 
 app.get('/departures/:stopid/:route', function (req, res) {
-    console.log(req.params.stopid);
-    console.log(req.params.route);
-    console.log('https://live.kvv.de/webapp/departures/byroute/' + RouteEnum.properties[RouteEnum[req.params.route]].name + '/' + req.params.stopid + '?maxInfos=10&key=377d840e54b59adbe53608ba1aad70e8')
     request('https://live.kvv.de/webapp/departures/byroute/' + RouteEnum.properties[RouteEnum[req.params.route]].name + '/' + req.params.stopid + '?maxInfos=10&key=377d840e54b59adbe53608ba1aad70e8',
         {json: true}, (err, res2, body) => {
             if (err) {
