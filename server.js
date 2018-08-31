@@ -18,8 +18,7 @@ app.get('/', function (req, res) {
         res.render('stop', {
             data: req.body,
             errors: {},
-            stops: body.stops,
-            routes: RouteEnum
+            stops: body.stops
         });
     });
 
@@ -38,7 +37,8 @@ app.get('/routes/:stopid', function (req, res) {
 })
 
 app.get('/departures/:stopid/:route', function (req, res) {
-    request('https://live.kvv.de/webapp/departures/byroute/' + RouteEnum.properties[RouteEnum[req.params.route]].name + '/' + req.params.stopid + '?maxInfos=10&key=377d840e54b59adbe53608ba1aad70e8',
+
+    request('https://live.kvv.de/webapp/departures/byroute/' + RouteEnum[req.params.route].name + '/' + req.params.stopid + '?maxInfos=10&key=377d840e54b59adbe53608ba1aad70e8',
         {json: true}, (err, res2, body) => {
             if (err) {
                 return console.log(err);
@@ -61,12 +61,7 @@ app.listen(3000, function () {
 
 
 var RouteEnum = {
-    ONE: 1,
-    TWO: 2,
-    THREE: 3,
-    properties: {
-        1: {name: "1", value: 1},
-        2: {name: "2", value: 2},
-        3: {name: "3", value: 3}
-    }
+    ONE: {name: "1"},
+    TWO: {name: "2"},
+    THREE: {name: "3"}
 };
