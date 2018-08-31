@@ -5,6 +5,7 @@
     <title>Test</title>
     <% include ../partials/head %>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
 
 </head>
 
@@ -15,18 +16,37 @@
 
 <div>
     <div class="container">
+
         <h1>Departures: </h1>
-        <div class="row">
+        <div class="row" id="stops">
             <div class="col-lg-12">
                 <div class="list-group">
                     <% stops.forEach((stop) => { %>
-                    <a href="/routes/<%= stop.id %>" class="list-group-item">
+                    <div class="list-group-item stopsListItem" id="<%= stop.id %>">
                         <h4 class="list-group-item-heading"><%= stop.name %></h4>
                         <p class="list-group-item-text"><%= stop.distance %></p>
-                    </a>
+                    </div>
                     <% }) %>
                 </div>
             </div>
+        </div>
+
+        <h1>Routes: </h1>
+        <div class="row" id="routes">
+            <div class="col-lg-12">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <% for (var route in routes ) { %>
+                        <div class="list-group-item routeListItem" id="<%= route %>">
+                            <h4 class="list-group-item-text"><%= route %></h4>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="departureList">
         </div>
     </div>
 </div>
@@ -36,6 +56,54 @@
 <footer>
     <% include ../partials/footer %>
 </footer>
+
+<script>
+    var stopId = null;
+    var routeId = null;
+
+    $(".stopsListItem").on("click", function () {
+
+        $('#stops').find('.active').removeClass('active');
+        $(this).addClass('active');
+
+        stopId = $(this).attr('id');
+
+        if (routeId != null) {
+            $.ajax({
+                type: 'GET',
+                url: '/departures/' + stopId + '/' + routeId,
+                success: function (result) {
+                    console.log(result);
+                    $('#departureList').html(result);
+                }
+            });
+        }
+
+
+    })
+
+    $(".routeListItem").on("click", function () {
+
+
+        routeId = $(this).attr('id');
+        $('#routes').find('.active').removeClass('active');
+        $(this).addClass('active');
+
+        if (stopId != null) {
+            $.ajax({
+                type: 'GET',
+                url: '/departures/' + stopId + '/' + routeId,
+                success: function (result) {
+                    console.log(result);
+                    $('#departureList').html(result);
+                }
+            });
+
+        }
+
+    })
+
+</script>
 
 </body>
 </html>

@@ -18,7 +18,8 @@ app.get('/', function (req, res) {
         res.render('stop', {
             data: req.body,
             errors: {},
-            stops: body.stops
+            stops: body.stops,
+            routes: RouteEnum
         });
     });
 
@@ -26,8 +27,7 @@ app.get('/', function (req, res) {
 
 
 app.get('/routes/:stopid', function (req, res) {
-
-    res.render('route', {
+    res.render('routes', {
         data: {},
         errors: {},
         stops: [],
