@@ -69,6 +69,7 @@
 
 <script>
 
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
     }
@@ -84,6 +85,13 @@
             center: [0, 0],
             zoom: 16
         })
+    });
+
+    map.on('click', function (m, evt) {
+        var mouseCoords = [m.originalEvent.offsetX, m.originalEvent.offsetY];
+        let coordinateFromPixel = map.getCoordinateFromPixel(mouseCoords);
+        var position = new ol.proj.transform(coordinateFromPixel, "EPSG:900913", "EPSG:4326");
+        alert(position);
     });
 
     function showPosition(position) {
