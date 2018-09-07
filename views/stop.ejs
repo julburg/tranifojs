@@ -22,10 +22,10 @@
                 <h1>Stops: </h1>
                 <div class="list-group">
                     <% stops.forEach((stop) => { %>
-                    <div class="list-group-item stopsListItem" id="<%= stop.id %>">
+                    <a  class="list-group-item stopsListItem" id="<%= stop.id %>">
                         <h4 class="list-group-item-heading"><%= stop.name %></h4>
                         <p class="list-group-item-text"><%= stop.distance %></p>
-                    </div>
+                    </a>
                     <% }) %>
                 </div>
             </div>
@@ -34,9 +34,9 @@
                 <h1>Routes: </h1>
                 <div class="list-group">
                     <% for (var route in routes ) { %>
-                    <div class="list-group-item routeListItem" id="<%= route %>">
+                    <a class="list-group-item routeListItem" id="<%= route %>">
                         <h4 class="list-group-item-text"><%= route %></h4>
-                    </div>
+                    </a>
                     <% } %>
                 </div>
             </div>
