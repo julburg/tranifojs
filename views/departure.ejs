@@ -1,11 +1,11 @@
 <h1>Departures: </h1>
 <div class="col-lg-4">
     <div class="list-group">
+        <% departures.forEach((departure) => { %>
         <div class="list-group-item">
-            <% departures.forEach((departure) => { %>
             <h4 class="list-group-item-heading"><%= departure.destination %></h4>
             <h4 class="list-group-item-text"><%= departure.time %></h4>
-            <% }) %>
         </div>
+        <% }) %>
     </div>
 </div>
