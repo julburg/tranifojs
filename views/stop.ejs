@@ -16,10 +16,10 @@
 
 <div>
     <div class="container">
+        <div class="row">
 
-        <h1>Departures: </h1>
-        <div class="row" id="stops">
-            <div class="col-lg-12">
+            <div class="col-lg-4" id="stops">
+                <h1>Departures: </h1>
                 <div class="list-group">
                     <% stops.forEach((stop) => { %>
                     <div class="list-group-item stopsListItem" id="<%= stop.id %>">
@@ -29,24 +29,20 @@
                     <% }) %>
                 </div>
             </div>
-        </div>
 
-        <h1>Routes: </h1>
-        <div class="row" id="routes">
-            <div class="col-lg-12">
+            <div class="col-lg-4" id="routes">
+                <h1>Routes: </h1>
                 <div class="list-group">
-                    <div class="list-group-item">
-                        <% for (var route in routes ) { %>
-                        <div class="list-group-item routeListItem" id="<%= route %>">
-                            <h4 class="list-group-item-text"><%= route %></h4>
-                        </div>
-                        <% } %>
+                    <% for (var route in routes ) { %>
+                    <div class="list-group-item routeListItem" id="<%= route %>">
+                        <h4 class="list-group-item-text"><%= route %></h4>
                     </div>
+                    <% } %>
                 </div>
             </div>
-        </div>
 
-        <div id="departureList">
+            <div id="departureList">
+            </div>
         </div>
     </div>
 </div>
@@ -69,14 +65,7 @@
         stopId = $(this).attr('id');
 
         if (routeId != null) {
-            $.ajax({
-                type: 'GET',
-                url: '/departures/' + stopId + '/' + routeId,
-                success: function (result) {
-                    console.log(result);
-                    $('#departureList').html(result);
-                }
-            });
+            showDepartures();
         }
 
 
@@ -90,18 +79,28 @@
         $(this).addClass('active');
 
         if (stopId != null) {
-            $.ajax({
-                type: 'GET',
-                url: '/departures/' + stopId + '/' + routeId,
-                success: function (result) {
-                    console.log(result);
-                    $('#departureList').html(result);
-                }
-            });
+            showDepartures();
 
         }
 
     })
+
+    function showDepartures() {
+        $.ajax({
+            type: 'GET',
+            url: '/departures/' + stopId + '/' + routeId,
+            success: function (result) {
+                console.log(result);
+                let $departureList = $('#departureList');
+                $departureList.html(result);
+                if (!$departureList.find('.list-group-item-heading').length) {
+                    $departureList.hide();
+                } else {
+                    $departureList.show();
+                }
+            }
+        });
+    }
 
 </script>
 
