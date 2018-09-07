@@ -89,7 +89,14 @@
 
     })
 
+    function showPosition(position) {
+        console.log(position.coords.latitude);
+    }
+
     function showDepartures() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
         $.ajax({
             type: 'GET',
             url: '/departures/' + stopId + '/' + routeId,
