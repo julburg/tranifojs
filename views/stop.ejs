@@ -32,16 +32,7 @@
 
         <div class="row">
 
-            <div class="col-lg-4" id="stops">
-                <h1>Stops: </h1>
-                <div class="list-group">
-                    <% stops.forEach((stop) => { %>
-                    <a class="list-group-item stopsListItem" id="<%= stop.id %>">
-                        <h4 class="list-group-item-heading"><%= stop.name %></h4>
-                        <p class="list-group-item-text"><%= stop.distance %></p>
-                    </a>
-                    <% }) %>
-                </div>
+            <div id="stopsList">
             </div>
 
             <div class="col-lg-4" id="routes">
@@ -69,7 +60,6 @@
 
 <script>
 
-
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
     }
@@ -91,30 +81,17 @@
         var mouseCoords = [m.originalEvent.offsetX, m.originalEvent.offsetY];
         let coordinateFromPixel = map.getCoordinateFromPixel(mouseCoords);
         var position = new ol.proj.transform(coordinateFromPixel, "EPSG:900913", "EPSG:4326");
-        alert(position);
+        showStops(position[0],position[1]);
     });
 
     function showPosition(position) {
-        var position = new ol.proj.transform([position.coords.longitude, position.coords.latitude], "EPSG:4326", "EPSG:900913");
-        map.getView().setCenter(position);
+        var transformedPosition = new ol.proj.transform([position.coords.longitude, position.coords.latitude], "EPSG:4326", "EPSG:900913");
+        map.getView().setCenter(transformedPosition);
+        showStops(position.coords.longitude, position.coords.latitude);
     }
 
     var stopId = null;
     var routeId = null;
-
-    $(".stopsListItem").on("click", function () {
-
-        $('#stops').find('.active').removeClass('active');
-        $(this).addClass('active');
-
-        stopId = $(this).attr('id');
-
-        if (routeId != null) {
-            showDepartures();
-        }
-
-
-    })
 
     $(".routeListItem").on("click", function () {
 
@@ -146,6 +123,31 @@
         });
     }
 
+    function showStops(longitude, latitude) {
+        $.ajax({
+            type: 'GET',
+            url: '/stops/' + longitude + '/' + latitude,
+            success: function (result) {
+                let $stopsList = $('#stopsList');
+                $stopsList.html(result);
+
+                $(".stopsListItem").on("click", function () {
+                    $('#stopsList').find('.active').removeClass('active');
+                    $(this).addClass('active');
+
+                    stopId = $(this).attr('id');
+
+                    if (routeId != null) {
+                        showDepartures();
+                    }
+
+
+                })
+            }
+        });
+
+
+    }
 </script>
 
 </body>

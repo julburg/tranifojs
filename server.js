@@ -10,12 +10,23 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function (req, res) {
 
-    request('https://live.kvv.de/webapp/stops/bylatlon/49.0040079/8.3849635?key=377d840e54b59adbe53608ba1aad70e8', {json: true}, (err, res2, body) => {
+    res.render('stop', {
+        data: req.body,
+        errors: {},
+        stops: [],
+        routes: RouteEnum
+    });
+
+})
+
+app.get('/stops/:lon/:lat', function (req, res) {
+
+    request('https://live.kvv.de/webapp/stops/bylatlon/'+req.params.lat+'/'+req.params.lon+'?key=377d840e54b59adbe53608ba1aad70e8', {json: true}, (err, res2, body) => {
         if (err) {
             return console.log(err);
         }
 
-        res.render('stop', {
+        res.render('stops', {
             data: req.body,
             errors: {},
             stops: body.stops,
@@ -24,7 +35,6 @@ app.get('/', function (req, res) {
     });
 
 })
-
 
 app.get('/routes/:stopid', function (req, res) {
     res.render('routes', {
