@@ -29,7 +29,7 @@
             <div id="map" style="height:250px"></div>
 
         </div>
-
+        <button type="button" class="btn btn-primary" id="currentCoordinatesBtn">Aktuelle Position</button>
         <div class="row">
 
             <div id="stopsList">
@@ -60,9 +60,6 @@
 
 <script>
 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    }
 
     var raster = new ol.layer.Tile({
         source: new ol.source.OSM()
@@ -73,9 +70,15 @@
         target: document.getElementById("map"),
         view: new ol.View({
             center: [0, 0],
-            zoom: 16
+            zoom: 13
         })
     });
+
+    var initalLongitude=8.401501613777041;
+    var initalLatitude=49.00644099166911;
+    var transformedPosition = new ol.proj.transform([initalLongitude, initalLatitude], "EPSG:4326", "EPSG:900913");
+    map.getView().setCenter(transformedPosition);
+    showStops(initalLongitude, initalLatitude);
 
     map.on('click', function (m, evt) {
         var mouseCoords = [m.originalEvent.offsetX, m.originalEvent.offsetY];
@@ -83,12 +86,6 @@
         var position = new ol.proj.transform(coordinateFromPixel, "EPSG:900913", "EPSG:4326");
         showStops(position[0],position[1]);
     });
-
-    function showPosition(position) {
-        var transformedPosition = new ol.proj.transform([position.coords.longitude, position.coords.latitude], "EPSG:4326", "EPSG:900913");
-        map.getView().setCenter(transformedPosition);
-        showStops(position.coords.longitude, position.coords.latitude);
-    }
 
     var stopId = null;
     var routeId = null;
@@ -104,8 +101,20 @@
             showDepartures();
 
         }
-
     })
+
+    $("#currentCoordinatesBtn").on("click", function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+    })
+
+    function showPosition(position) {
+        var positionTransformed = new ol.proj.transform([position.coords.longitude, position.coords.latitude], "EPSG:4326", "EPSG:900913");
+        map.getView().setCenter(positionTransformed);
+        map.getView().setZoom(14);
+        showStops(position.coords.longitude, position.coords.latitude)
+    }
 
     function showDepartures() {
         $.ajax({
