@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 
 app.get('/stops/:lon/:lat', function (req, res) {
 
-    request('https://live.kvv.de/webapp/stops/bylatlon/'+req.params.lat+'/'+req.params.lon+'?key=377d840e54b59adbe53608ba1aad70e8', {json: true}, (err, res2, body) => {
+    request('https://live.kvv.de/webapp/stops/bylatlon/' + req.params.lat + '/' + req.params.lon + '?key=377d840e54b59adbe53608ba1aad70e8', {json: true}, (err, res2, body) => {
         if (err) {
             return console.log(err);
         }
@@ -37,13 +37,23 @@ app.get('/stops/:lon/:lat', function (req, res) {
 })
 
 app.get('/routes/:stopid', function (req, res) {
-    res.render('routes', {
-        data: {},
-        errors: {},
-        stops: [],
-        stopid: req.params.stopid,
-        routes: RouteEnum
-    });
+
+    request('https://live.kvv.de/webapp/departures/bystop/' + req.params.stopid + '?key=377d840e54b59adbe53608ba1aad70e8',
+        {json: true}, (err, res2, body) => {
+            if (err) {
+                return console.log(err);
+            }
+            body.departures.
+
+
+            res.render('routes', {
+                data: {},
+                errors: {},
+                stops: [],
+                stopid: req.params.stopid,
+                routes: RouteEnum
+            });
+        });
 })
 
 app.get('/departures/:stopid/:route', function (req, res) {
