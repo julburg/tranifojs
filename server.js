@@ -14,14 +14,14 @@ app.get('/', function (req, res) {
         data: req.body,
         errors: {},
         stops: [],
-        routes: RouteEnum
+        routes: []
     });
 
 })
 
 app.get('/stops/:lon/:lat', function (req, res) {
 
-    request('https://live.kvv.de/webapp/stops/bylatlon/'+req.params.lat+'/'+req.params.lon+'?key=377d840e54b59adbe53608ba1aad70e8', {json: true}, (err, res2, body) => {
+    request('https://live.kvv.de/webapp/stops/bylatlon/' + req.params.lat + '/' + req.params.lon + '?key=377d840e54b59adbe53608ba1aad70e8', {json: true}, (err, res2, body) => {
         if (err) {
             return console.log(err);
         }
@@ -29,29 +29,46 @@ app.get('/stops/:lon/:lat', function (req, res) {
         res.render('stops', {
             data: req.body,
             errors: {},
-            stops: body.stops,
-            routes: RouteEnum
+            stops: body.stops
         });
     });
 
 })
 
 app.get('/routes/:stopid', function (req, res) {
-    res.render('routes', {
-        data: {},
-        errors: {},
-        stops: [],
-        stopid: req.params.stopid,
-        routes: RouteEnum
-    });
+
+    request('https://live.kvv.de/webapp/departures/bystop/' + req.params.stopid + '?key=377d840e54b59adbe53608ba1aad70e8',
+        {json: true}, (err, res2, body) => {
+            if (err) {
+                return console.log(err);
+            }
+
+            let routes = [];
+            if (body.departures) {
+                routes = body.departures.map(departure => departure.route);
+            }
+
+            res.render('routes', {
+                data: {},
+                errors: {},
+                stops: [],
+                stopid: req.params.stopid,
+                routes: new Set(routes)
+            });
+        });
 })
 
 app.get('/departures/:stopid/:route', function (req, res) {
 
-    request('https://live.kvv.de/webapp/departures/byroute/' + RouteEnum[req.params.route].name + '/' + req.params.stopid + '?maxInfos=10&key=377d840e54b59adbe53608ba1aad70e8',
+    request('https://live.kvv.de/webapp/departures/byroute/' + req.params.route + '/' + req.params.stopid + '?maxInfos=10&key=377d840e54b59adbe53608ba1aad70e8',
         {json: true}, (err, res2, body) => {
             if (err) {
                 return console.log(err);
+            }
+
+            let departures = [];
+            if (body.departures) {
+                departures = body.departures;
             }
 
             res.render('departure', {
@@ -59,7 +76,7 @@ app.get('/departures/:stopid/:route', function (req, res) {
                 errors: {},
                 stopid: req.params.stopid,
                 route: req.params.route,
-                departures: body.departures
+                departures: departures
             });
         });
 })
@@ -68,34 +85,3 @@ app.get('/departures/:stopid/:route', function (req, res) {
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!')
 })
-
-
-var RouteEnum = {
-        ONE: {name: "1"},
-        TWO: {name: "2"},
-        THREE: {name: "3"},
-        FOUR: {name: "4"},
-        FIVE: {name: "5"},
-        SIX: {name: "6"},
-        EIGHT: {name: "8"},
-
-        S1: {name: "S1"},
-        S11: {name: "S11"},
-        S2: {name: "S2"},
-        S3: {name: "S3"},
-        S31: {name: "S31"},
-        S32: {name: "S32"},
-        S4: {name: "S4"},
-        S41: {name: "S41"},
-        S42: {name: "S42"},
-        S5: {name: "S5"},
-        S51: {name: "S51"},
-        S52: {name: "S52"},
-        S6: {name: "S6"},
-        S7: {name: "S7"},
-        S71: {name: "S71"},
-        S8: {name: "S8"},
-        S81: {name: "S81"},
-        S9: {name: "S9"}
-    }
-;

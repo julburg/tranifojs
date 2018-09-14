@@ -35,15 +35,7 @@
             <div id="stopsList">
             </div>
 
-            <div class="col-lg-4" id="routes">
-                <h1>Routes: </h1>
-                <div class="list-group">
-                    <% for (var route in routes ) { %>
-                    <a class="list-group-item routeListItem" id="<%= route %>">
-                        <h4 class="list-group-item-text"><%= route %></h4>
-                    </a>
-                    <% } %>
-                </div>
+            <div id="routesList">
             </div>
 
             <div id="departureList" class="animated slideInRight">
@@ -74,8 +66,8 @@
         })
     });
 
-    var initalLongitude=8.401501613777041;
-    var initalLatitude=49.00644099166911;
+    var initalLongitude = 8.401501613777041;
+    var initalLatitude = 49.00644099166911;
     var transformedPosition = new ol.proj.transform([initalLongitude, initalLatitude], "EPSG:4326", "EPSG:900913");
     map.getView().setCenter(transformedPosition);
     showStops(initalLongitude, initalLatitude);
@@ -84,24 +76,12 @@
         var mouseCoords = [m.originalEvent.offsetX, m.originalEvent.offsetY];
         let coordinateFromPixel = map.getCoordinateFromPixel(mouseCoords);
         var position = new ol.proj.transform(coordinateFromPixel, "EPSG:900913", "EPSG:4326");
-        showStops(position[0],position[1]);
+        showStops(position[0], position[1]);
     });
 
     var stopId = null;
     var routeId = null;
 
-    $(".routeListItem").on("click", function () {
-
-
-        routeId = $(this).attr('id');
-        $('#routes').find('.active').removeClass('active');
-        $(this).addClass('active');
-
-        if (stopId != null) {
-            showDepartures();
-
-        }
-    })
 
     $("#currentCoordinatesBtn").on("click", function () {
         if (navigator.geolocation) {
@@ -145,10 +125,7 @@
                     $(this).addClass('active');
 
                     stopId = $(this).attr('id');
-
-                    if (routeId != null) {
-                        showDepartures();
-                    }
+                    showRoutes();
 
 
                 })
@@ -156,6 +133,34 @@
         });
 
 
+        function showRoutes() {
+            $.ajax({
+                type: 'GET',
+                url: '/routes/' + stopId,
+                success: function (result) {
+
+                    let routesList = $('#routesList');
+                    routesList.hide();
+                    if ($(result).find('.list-group-item').length) {
+                        console.log("huhu")
+                        routesList.html(result);
+                        routesList.show();
+
+                        $(".routeListItem").on("click", function () {
+
+                            routeId = $(this).attr('id');
+                            $('#routesList').find('.active').removeClass('active');
+                            $(this).addClass('active');
+
+                            if (stopId != null) {
+                                showDepartures();
+
+                            }
+                        })
+                    }
+                }
+            });
+        }
     }
 </script>
 
