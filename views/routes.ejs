@@ -1,0 +1,10 @@
+<div class="col-lg-4" id="routes">
+    <h1>Routes: </h1>
+    <div class="list-group">
+        <% routes.forEach((route) => { %>
+        <a class="list-group-item routeListItem" id="<%= route %>">
+            <h4 class="list-group-item-text"><%= route %></h4>
+        </a>
+        <% }) %>
+    </div>
+</div>
